@@ -1,0 +1,126 @@
+Route::get('przepisanie', function () {
+    date_default_timezone_set('UTC');
+    try {
+        $date = date("Y-m-d h:i:s");
+
+
+        //kategorie
+        $sql = new PDO('mysql:host=localhost;dbname=wapteka_blog;port=3306', 'root', '');
+        $sql->exec('SET NAMES utf8');
+        $sql->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        ob_start();
+        //kategorie
+        // $str = "select * from wp_blogwaptekaterms inner join  wp_blogwaptekaterm_taxonomy where wp_blogwaptekaterm_taxonomy.taxonomy=\"category\" AND wp_blogwaptekaterm_taxonomy.term_id = wp_blogwaptekaterms.term_id;";
+        //tagi
+       //  $str = "select * from wp_blogwaptekaterms inner join  wp_blogwaptekaterm_taxonomy where wp_blogwaptekaterm_taxonomy.taxonomy=\"post_tag\" AND wp_blogwaptekaterm_taxonomy.term_id = wp_blogwaptekaterms.term_id;";
+
+        //posty
+         // $str = "Select * from wp_blogwaptekaposts where post_parent=0;";
+        // przeladowanie blg_img
+         // $str = "select * from wp_blogwaptekaposts inner join wp_blogwaptekapostmeta on wp_blogwaptekaposts.ID = wp_blogwaptekapostmeta.post_id  where post_parent !='' AND wp_blogwaptekapostmeta.meta_key = '_wp_attachment_metadata' ";
+       //przeladowanie seo_alt
+         //$str = "select * from wp_blogwaptekaposts inner join wp_blogwaptekapostmeta on wp_blogwaptekaposts.ID = wp_blogwaptekapostmeta.post_id  where post_parent !='' AND wp_blogwaptekapostmeta.meta_key = '_wp_attachment_image_alt' ";
+        //realcje blg-blc
+        //$str = "select  object_id, wp_blogwaptekaterm_taxonomy.term_taxonomy_id from wp_blogwaptekaterm_relationships  inner join wp_blogwaptekaterm_taxonomy on wp_blogwaptekaterm_taxonomy.term_id = wp_blogwaptekaterm_relationships.term_taxonomy_id where wp_blogwaptekaterm_taxonomy.taxonomy = 'category'";
+
+        //relacje blg-blt
+        $str = "select object_id, wp_blogwaptekaterm_taxonomy.term_taxonomy_id from wp_blogwaptekaterm_relationships  inner join wp_blogwaptekaterm_taxonomy on wp_blogwaptekaterm_taxonomy.term_id = wp_blogwaptekaterm_relationships.term_taxonomy_id where wp_blogwaptekaterm_taxonomy.taxonomy = 'post_tag'";
+
+        $catToBase["blc_id"] = 0;
+        $array = array();
+
+        $in = 0;
+        $query = $sql->query($str);
+        if ($query) {
+            //  dd($query->fetchAll());
+
+            $rows = $query->fetchAll();
+          foreach ($rows as $row) {
+              // $cat = $row['meta_value'];
+            //   $array = unserialize($cat);
+
+            //  $string ="http://www.wapteka.pl/blog/wp-content/uploads/".substr($array['file'],0,8).$array['sizes']['thumbnail']['file'];
+            //dd($string);
+
+              /*insert kategorie
+
+              $catToBase["id"] = $row['term_id'];
+                 $catToBase["BLC_NAZ"] = $row['name'];
+                 $catToBase["BLC_SLG"] = $row['slug'];
+                 $catToBase["BLC_ROD"] = $row['parent'];
+                 $catToBase["BLC_KOL"] = $row['count'];
+                 $catToBase["BLC_AKT"] = $in;
+                 $catToBase["created_at"] = $date;
+                 $catToBase["updated_at"] = $date;
+
+
+                 $blc = \App\Blc::create($catToBase);
+
+              //insert tagi
+                /*$catToBase["id"]  = $row['term_id'];
+                $catToBase["BLT_NAZ"] = $row['name'];
+                $catToBase["BLT_SLG"] = $row['slug'];
+                $catToBase["created_at"] = $date;
+                $catToBase["updated_at"] = $date;
+
+
+                 $blt = \App\Blt::create($catToBase);
+
+
+
+             update id
+              try {
+                $blt = \App\Blt::where("BLT_NAZ", $row['name'])->update(["id" => $row['term_id']]);
+              }
+              catch (Exception $e)
+              {
+               dd($e );
+              }*/
+
+              //insert post
+              //   $in = $in +1;
+              /* $catToBase["id"] = $row["ID"];
+               $catToBase["BLG_TIT"] = $row["post_title"];
+               $catToBase["BLG_SLG"] = str_slug($row["post_title"]);
+               $catToBase["BLG_DAT"] = $row["post_date"];
+               $catToBase["BLG_TRE"] = $row["post_content"];
+              // $catToBase["BLG_IMG"] =
+               $catToBase['SEO_TTL'] = strip_tags($row["post_title"]);
+               //$catToBase['SEO_ALT']
+               $catToBase['SEO_DSC'] = strip_tags($row["post_content"]);
+               $catToBase["created_at"] = $row["post_date"];
+               $catToBase["updated_at"] = $row["post_modified"];
+
+               $blg = \App\Blg::create($catToBase);
+
+              //update id in post
+             try {
+                 $blg = \App\Blg::where("BLG_TIT", $row['post_title'])->update(["id" => $row['ID']]);
+             }
+             catch (Exception $e)
+             {
+                 dd($e );
+             }
+           }
+
+           dd($catToBase);
+              */
+              //wyslanie do bloga blg_img i seo_alt
+          //   $blg = \App\Blg::where("ID",  $row['post_parent'] )->where("BLG_IMG" , '') ->update(["BLG_IMG" => $string ]);
+             // $blg = \App\Blg::where("ID",  $row['post_parent'])->where("SEO_ALT", '')->update(["SEO_ALT" => str_slug($row['meta_value'])]);
+
+              //realcje kategorie
+              //  DB::connection('wapteka')->insert('insert into blc_blg (blg_id, blc_id) values (?,?)', [$row['object_id'], $row['term_taxonomy_id']]);
+              //relacje tagi
+              // DB::connection('wapteka')->insert('insert into blg_blt (blg_id, blt_id) values (?,?)', [$row['object_id'], $row['term_taxonomy_id']]);
+
+          }
+        }
+    }
+
+    catch (PDOException $e) {
+        dd($e->getMessage());
+    }
+
+
+});
